@@ -9,9 +9,10 @@ import config from '../../utils/config.json';
 import { ToastsContainer, ToastsStore } from 'react-toasts';
 
 
-import TwitterLogin from 'react-twitter-auth';
+// import TwitterLogin from 'react-twitter-auth';
 import FacebookLogin from 'react-facebook-login';
 import { GoogleLogin } from 'react-google-login';
+import HeaderBar from '../HeaderBar';
 
 class Login extends Component {
 
@@ -85,28 +86,26 @@ class Login extends Component {
         console.log("onFailure:", error)
     }
 
-    componentWillReceiveProps(nextProps) {   
+    componentWillReceiveProps(nextProps) {
 
         if (nextProps.registerResponse) {
 
-            console.log("response:",nextProps.registerResponse)
+            console.log("response:", nextProps.registerResponse)
             if (nextProps.registerResponse.Status == 200) {
                 ToastsStore.success(nextProps.registerResponse.message);
                 this.state.isAuthenticated = true;
 
-                if(nextProps.registerResponse.LoginType == "facebook")
-                {
-                    this.state.name =  nextProps.registerResponse.Data.Fb[0].name
+                if (nextProps.registerResponse.LoginType == "facebook") {
+                    this.state.name = nextProps.registerResponse.Data.Fb[0].name
                 }
-                else if(nextProps.registerResponse.LoginType== "google")
-                {
-                    this.state.name =  nextProps.registerResponse.Data.Gmail[0].givenName +" "+nextProps.registerResponse.Data.Gmail[0].familyName
+                else if (nextProps.registerResponse.LoginType == "google") {
+                    this.state.name = nextProps.registerResponse.Data.Gmail[0].givenName + " " + nextProps.registerResponse.Data.Gmail[0].familyName
                 }
                 this.state.email = nextProps.registerResponse.Data.email;
 
 
-                
-               
+
+
             }
             else {
                 ToastsStore.error(nextProps.registerResponse.message)
@@ -119,6 +118,15 @@ class Login extends Component {
 
 
     render() {
+        const { isAuthenticated } = this.state;
+
+        if (isAuthenticated) {
+            return <Redirect to={{
+                pathname: '/Home'
+            }} />
+        }
+
+
         let content = !!this.state.isAuthenticated ?
             (
                 <div>
@@ -137,23 +145,49 @@ class Login extends Component {
                 </div>
             ) :
             (
-                <div>
-                    {/* <TwitterLogin loginUrl="http://localhost:4000/api/v1/auth/twitter"
+                <HeaderBar>
+                    <div>
+                        {/* <TwitterLogin loginUrl="http://localhost:4000/api/v1/auth/twitter"
                         onFailure={this.twitterResponse} onSuccess={this.twitterResponse}
                         requestTokenUrl="http://localhost:4000/api/v1/auth/twitter/reverse" /> */}
-                    <FacebookLogin
-                        appId={config.FACEBOOK_APP_ID}
-                        autoLoad={false}
-                        fields="name,email,picture"
-                        callback={this.facebookResponse} />
-                    <GoogleLogin
-                        clientId={config.GOOGLE_CLIENT_ID}
-                        buttonText="Login"
-                        onSuccess={this.googleResponse}
-                        onFailure={this.googleResponse}
-                    />
 
-                </div>
+
+                        <div className="container jumbotron vertical-cente">
+                            <h2 className="text-center">Login</h2>
+
+                            <FacebookLogin
+                                appId={config.FACEBOOK_APP_ID}
+                                autoLoad={false}
+                                fields="name,email,picture"
+                                callback={this.facebookResponse} />
+                            <GoogleLogin
+                                clientId={config.GOOGLE_CLIENT_ID}
+                                buttonText="Login"
+                                onSuccess={this.googleResponse}
+                                onFailure={this.googleResponse}
+                            />
+                            <br />
+                            <h6 className="text-center" >Or</h6>
+
+                            <hr />
+
+                            <form >
+                                <div className="form-group">
+                                    <label for="username"><b>Username</b></label>
+                                    <input type="username" className="form-control" id="username" placeholder="username" name="username" />
+                                </div>
+                                <div className="form-group">
+                                    <label for="pwd"><b>Password</b></label>
+                                    <input type="password" className="form-control" id="pwd" placeholder="password" name="pswd" />
+                                </div>
+                                <div className="text-right">
+                                    <button type="submit " className="btn btn-primary">Login</button>
+                                </div>
+                            </form>
+                        </div>
+
+                    </div>
+                </HeaderBar>
             );
 
         return (

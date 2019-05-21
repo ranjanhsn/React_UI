@@ -2,7 +2,7 @@ import React from 'react';
 import { Router, Route } from 'react-router-dom';
 import createHistory from 'history/createBrowserHistory';
 import Login from './Pages/Login';
-// import Dashboard from './Pages/Dashboard';
+import Home from './Pages/Home';
 
 export const history = createHistory();
 //console.log('Router', history.location.pathname);
@@ -12,7 +12,7 @@ const Routes = () => (
     <Router history={history}>
         <div>
             <Route exact path='/' component={Login} />
-            {/* <Route path='/Dashboard' component={Dashboard} />  */}
+            <Route path='/Home' component={Home} /> 
          
 
     
